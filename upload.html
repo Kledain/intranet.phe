@@ -55,6 +55,7 @@
         const fileList = document.getElementById('fileList');
         fileList.innerHTML = '';
         result.items.forEach((itemRef) => {
+          console.log('Fichier trouvé :', itemRef.name); // Message de débogage
           getDownloadURL(itemRef).then((url) => {
             const li = document.createElement('li');
 
@@ -83,10 +84,12 @@
             }
 
             fileList.appendChild(li);
+          }).catch((error) => {
+            console.error('Erreur de téléchargement de l\'URL :', error); // Message de débogage
           });
         });
       }).catch((error) => {
-        console.error('Erreur de listing des fichiers :', error);
+        console.error('Erreur de listing des fichiers :', error); // Message de débogage
       });
     }
   </script>
