@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Firebase Anonymous Auth</title>
+  <title>Exemple1 - Upload et Visualisation</title>
   <script type="module">
-    // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+    import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    // Your web app's Firebase configuration
+    // Votre configuration Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyB1Bgfytw3qdHkVJ0lZXZaRKAIyXU7Y9PA",
       authDomain: "intranet-phe.firebaseapp.com",
@@ -20,41 +18,84 @@
       measurementId: "G-QJB66W09CC"
     };
 
-    // Initialize Firebase
+    // Initialiser Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const auth = getAuth();
     const storage = getStorage(app);
 
-    // Sign in anonymously
-    signInAnonymously(auth)
-      .then(() => {
-        console.log('User signed in anonymously');
-      })
-      .catch((error) => {
-        console.error('Anonymous sign-in error:', error);
-      });
+    // Connexion anonyme
+    signInAnonymously(auth).then(() => {
+      console.log('Utilisateur connecté anonymement');
+      listFiles();
+    }).catch((error) => {
+      console.error('Erreur de connexion anonyme:', error);
+    });
 
-    // Function to upload file
+    // Fonction d'upload de fichier
     window.uploadFile = function() {
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
       if (file) {
-        const storageRef = ref(storage, 'uploads/' + file.name);
+        const storageRef = ref(storage, 'exemple1/' + file.name);
         uploadBytes(storageRef, file).then((snapshot) => {
-          console.log('Uploaded a blob or file!', snapshot);
+          console.log('Fichier uploadé :', snapshot);
+          listFiles();
         }).catch((error) => {
-          console.error('Upload failed', error);
+          console.error('Erreur d\'upload :', error);
         });
       } else {
-        console.log('No file selected');
+        console.log('Aucun fichier sélectionné');
       }
+    }
+
+    // Fonction pour lister les fichiers
+    function listFiles() {
+      const storageRef = ref(storage, 'exemple1/');
+      listAll(storageRef).then((result) => {
+        const fileList = document.getElementById('fileList');
+        fileList.innerHTML = '';
+        result.items.forEach((itemRef) => {
+          getDownloadURL(itemRef).then((url) => {
+            const li = document.createElement('li');
+
+            if (url.match(/\.(jpeg|jpg|png)$/)) {
+              const img = document.createElement('img');
+              img.src = url;
+              img.style.maxWidth = '200px';
+              li.appendChild(img);
+            } else if (url.match(/\.pdf$/)) {
+              const iframe = document.createElement('iframe');
+              iframe.src = url;
+              iframe.style.width = '100%';
+              iframe.style.height = '400px';
+              li.appendChild(iframe);
+            } else if (url.match(/\.docx$/)) {
+              const iframe = document.createElement('iframe');
+              iframe.src = 'https://docs.google.com/gview?url=' + encodeURIComponent(url) + '&embedded=true';
+              iframe.style.width = '100%';
+              iframe.style.height = '400px';
+              li.appendChild(iframe);
+            } else {
+              const a = document.createElement('a');
+              a.href = url;
+              a.textContent = itemRef.name;
+              li.appendChild(a);
+            }
+
+            fileList.appendChild(li);
+          });
+        });
+      }).catch((error) => {
+        console.error('Erreur de listing des fichiers :', error);
+      });
     }
   </script>
 </head>
 <body>
-  <h2>Uploader un fichier</h2>
+  <h2>Exemple1 - Upload et Visualisation</h2>
   <input type="file" id="fileInput" />
   <button onclick="uploadFile()">Upload</button>
+  <h3>Fichiers existants</h3>
+  <ul id="fileList"></ul>
 </body>
 </html>
