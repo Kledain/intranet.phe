@@ -51,7 +51,7 @@
     // Fonction pour lister les fichiers
     function listFiles() {
       const storageRef = ref(storage, 'exemple1/');
-      console.log('Listing files from:', storageRef.fullPath);
+      console.log('Tentative de listing des fichiers à partir de:', storageRef.fullPath);
       listAll(storageRef).then((result) => {
         const fileList = document.getElementById('fileList');
         fileList.innerHTML = '';
