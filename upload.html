@@ -90,6 +90,7 @@
         });
       }).catch((error) => {
         console.error('Erreur de listing des fichiers :', error); // Message de débogage
+        console.error(error.message); // Affichez le message d'erreur pour plus de détails
       });
     }
   </script>
