@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Anonymous Auth</title>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB1Bgfytw3qdHkVJ0lZXZaRKAIyXU7Y9PA",
+      authDomain: "intranet-phe.firebaseapp.com",
+      projectId: "intranet-phe",
+      storageBucket: "intranet-phe.appspot.com",
+      messagingSenderId: "473789505099",
+      appId: "1:473789505099:web:7b5c4f088ef45f0dd777ce",
+      measurementId: "G-QJB66W09CC"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth();
+    const storage = getStorage(app);
+
+    // Sign in anonymously
+    signInAnonymously(auth)
+      .then(() => {
+        console.log('User signed in anonymously');
+      })
+      .catch((error) => {
+        console.error('Anonymous sign-in error:', error);
+      });
+
+    // Function to upload file
+    function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      if (file) {
+        const storageRef = ref(storage, 'uploads/' + file.name);
+        uploadBytes(storageRef, file).then((snapshot) => {
+          console.log('Uploaded a blob or file!', snapshot);
+        }).catch((error) => {
+          console.error('Upload failed', error);
+        });
+      } else {
+        console.log('No file selected');
+      }
+    }
+  </script>
+</head>
+<body>
+  <h2>Uploader un fichier</h2>
+  <input type="file" id="fileInput" />
+  <button onclick="uploadFile()">Upload</button>
+</body>
+</html>
