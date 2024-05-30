@@ -36,7 +36,7 @@
       });
 
     // Function to upload file
-    function uploadFile() {
+    window.uploadFile = function() {
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
       if (file) {
