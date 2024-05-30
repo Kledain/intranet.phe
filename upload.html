@@ -51,9 +51,13 @@
     // Fonction pour lister les fichiers
     function listFiles() {
       const storageRef = ref(storage, 'exemple1/');
+      console.log('Listing files from:', storageRef.fullPath);
       listAll(storageRef).then((result) => {
         const fileList = document.getElementById('fileList');
         fileList.innerHTML = '';
+        if (result.items.length === 0) {
+          console.log('Aucun fichier trouvé.');
+        }
         result.items.forEach((itemRef) => {
           console.log('Fichier trouvé :', itemRef.name); // Message de débogage
           getDownloadURL(itemRef).then((url) => {
